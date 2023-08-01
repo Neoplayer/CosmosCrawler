@@ -18,7 +18,7 @@ public class Parser
         Timeout = TimeSpan.FromSeconds(5)
     };
 
-    public void Start()
+    public void Start(string network)
     {
         NodesToRequest.Add(new Node()
         {
@@ -28,17 +28,17 @@ public class Parser
 
         do
         {
-            SearchIteration();
+            SearchIteration(network);
         } while (NodesToRequest.Count > 0);
 
         var json = JsonConvert.SerializeObject(new
         {
             Nodes, Requested
-        });
+        }, Formatting.Indented);
         File.WriteAllText("res.json", json);
     }
 
-    private void SearchIteration()
+    private void SearchIteration(string network)
     {
         List<Node> toRequest = new List<Node>();
 
@@ -76,7 +76,10 @@ public class Parser
 
                     lock (toRequest)
                     {
-                        toRequest.Add(newNode);
+                        if(peer.NodeInfo.Network == network)
+                        {
+                            toRequest.Add(newNode);
+                        };
                     }
                 }
             }
@@ -90,7 +93,7 @@ public class Parser
         {
             distinctNodes.Remove(duplicate);
         }
-        
+
         NodesToRequest.Clear();
         NodesToRequest.AddRange(distinctNodes);
     }

@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 
 Parser parser = new Parser();
-parser.Start();
+parser.Start("osmosis-1");
 
 
 
